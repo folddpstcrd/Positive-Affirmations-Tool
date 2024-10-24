@@ -16,23 +16,19 @@
             padding: 10px;
             text-align: center;
             position: relative;
-            box-sizing: border-box;
         }
-
+        
         #input-page, #affirmations-page {
             width: 100%;
             max-width: 800px;
             padding: 10px;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-
+        
         #affirmations-page {
             display: none;
         }
-
+        
         #affirmation {
             font-size: 20px;
             margin: 20px 10px;
@@ -40,42 +36,16 @@
             min-height: 80px;
             transition: opacity 0.5s;
             padding: 10px;
-            max-width: 90%;
-            box-sizing: border-box;
         }
-
-        textarea {
-            width: 90%;
-            max-width: 600px;
-            height: 100px;
-            margin: 15px 0;
-            padding: 10px;
-            font-family: 'Arial', sans-serif;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .instructions {
-            margin: 20px;
-            color: #666;
-            font-size: 16px;
-            padding: 0 15px;
-            max-width: 90%;
-            box-sizing: border-box;
-        }
-
+        
         .button-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
             align-items: center;
             margin: 15px 0;
-            width: 100%;
-            box-sizing: border-box;
         }
-
+        
         button {
             width: 90%;
             max-width: 300px;
@@ -87,13 +57,31 @@
             cursor: pointer;
             transition: background-color 0.3s;
             margin: 5px 0;
-            white-space: normal;
         }
-
+        
         button:hover {
             background-color: #e0e0e0;
         }
-
+        
+        textarea {
+            width: 90%;
+            max-width: 600px;
+            height: 100px;
+            margin: 15px 0;
+            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .instructions {
+            margin: 20px;
+            color: #666;
+            font-size: 16px;
+            padding: 0 15px;
+        }
+        
         #bypass-button {
             font-size: 14px;
             background-color: #ffffff;
@@ -101,20 +89,19 @@
             width: auto;
             min-width: 120px;
         }
-
+        
         .file-controls {
             margin-top: 20px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             align-items: center;
-            width: 100%;
         }
-
+        
         .file-input {
             display: none;
         }
-
+        
         .back-button {
             position: static;
             margin: 10px 0;
@@ -126,9 +113,6 @@
         #all-affirmations {
             margin: 20px 10px;
             text-align: left;
-            padding: 0 15px;
-            width: 90%;
-            box-sizing: border-box;
         }
 
         .affirmation-entry {
@@ -137,11 +121,13 @@
             border-left: 3px solid #ddd;
         }
 
+        .date-text {
+            color: #666;
+            font-size: 0.9em;
+        }
+
         h2, h3, h4 {
             padding: 0 15px;
-            width: 100%;
-            box-sizing: border-box;
-            margin: 10px 0;
         }
 
         /* Desktop styles */
@@ -174,8 +160,6 @@
         }
     </style>
 </head>
-
-
 <body>
     <div id="input-page">
         <h2>Today's Achievement</h2>
@@ -316,6 +300,7 @@
                 allAffirmationsDiv.style.display = 'block';
                 affirmationsList.innerHTML = '';
                 
+                // Add base affirmations with header
                 const baseHeader = document.createElement('div');
                 baseHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Core Achievements:</h4>';
                 affirmationsList.appendChild(baseHeader);
@@ -323,10 +308,13 @@
                 baseAffirmations.forEach(affirmation => {
                     const entry = document.createElement('div');
                     entry.className = 'affirmation-entry';
-                    entry.innerHTML = `<div>${affirmation}</div>`;
+                    entry.innerHTML = `
+                        <div style="margin-top: 5px;">${affirmation}</div>
+                    `;
                     affirmationsList.appendChild(entry);
                 });
 
+                // Add user affirmations with header if they exist
                 if (userAffirmations.length > 0) {
                     const userHeader = document.createElement('div');
                     userHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Recent Achievements:</h4>';
@@ -337,7 +325,7 @@
                         const entry = document.createElement('div');
                         entry.className = 'affirmation-entry';
                         entry.innerHTML = `
-                            <div style="color: #666; font-size: 0.9em;">${affirmation.date}</div>
+                            <div class="date-text">${affirmation.date}</div>
                             <div style="margin-top: 5px;">${affirmation.text}</div>
                         `;
                         affirmationsList.appendChild(entry);
