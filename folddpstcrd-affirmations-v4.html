@@ -2,108 +2,180 @@
 <html>
 <head>
     <title>KAMY Achievements Reminder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-    font-family: 'Arial', sans-serif;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 10px;  /* reduced padding */
-    text-align: center;
-    position: relative;
-}
+            font-family: 'Arial', sans-serif;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+        }
 
-#input-page, #affirmations-page {
-    width: 100%;
-    max-width: 800px;
-    padding: 10px;
-    box-sizing: border-box;
-}
+        #input-page, #affirmations-page {
+            width: 100%;
+            max-width: 800px;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-#affirmation {
-    font-size: 20px;  /* smaller font for mobile */
-    margin: 20px 10px;  /* reduced margins */
-    line-height: 1.4;
-    min-height: 80px;
-    transition: opacity 0.5s;
-}
+        #affirmations-page {
+            display: none;
+        }
 
-textarea {
-    width: 90%;  /* slightly narrower */
-    max-width: 600px;
-    height: 100px;
-    margin: 15px 0;
-    padding: 10px;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;  /* better for mobile typing */
-}
+        #affirmation {
+            font-size: 20px;
+            margin: 20px 10px;
+            line-height: 1.4;
+            min-height: 80px;
+            transition: opacity 0.5s;
+            padding: 10px;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
 
-.button-container {
-    display: flex;
-    flex-direction: column;  /* stack buttons on mobile */
-    gap: 10px;
-    align-items: center;
-    margin: 15px 0;
-}
+        textarea {
+            width: 90%;
+            max-width: 600px;
+            height: 100px;
+            margin: 15px 0;
+            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
 
-button {
-    width: 90%;  /* wider buttons for better touch targets */
-    max-width: 300px;
-    padding: 12px 24px;
-    font-size: 16px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        .instructions {
+            margin: 20px;
+            color: #666;
+            font-size: 16px;
+            padding: 0 15px;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
 
-.file-controls {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;  /* stack buttons on mobile */
-    gap: 10px;
-    align-items: center;
-}
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-.back-button {
-    position: static;  /* change from absolute positioning */
-    margin: 10px 0;
-    width: auto;  /* allow back button to be smaller */
-}
+        button {
+            width: 90%;
+            max-width: 300px;
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px 0;
+            white-space: normal;
+        }
 
-/* Add media queries for responsive design */
-@media (min-width: 768px) {
-    /* Restore desktop layout for larger screens */
-    .button-container, .file-controls {
-        flex-direction: row;
-        justify-content: center;
-    }
+        button:hover {
+            background-color: #e0e0e0;
+        }
 
-    button {
-        width: auto;
-    }
+        #bypass-button {
+            font-size: 14px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            width: auto;
+            min-width: 120px;
+        }
 
-    #affirmation {
-        font-size: 28px;
-        margin: 40px;
-    }
+        .file-controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
 
-    .back-button {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        margin: 0;
-    }
-}
+        .file-input {
+            display: none;
+        }
+
+        .back-button {
+            position: static;
+            margin: 10px 0;
+            width: auto;
+            min-width: 100px;
+            font-size: 14px;
+        }
+
+        #all-affirmations {
+            margin: 20px 10px;
+            text-align: left;
+            padding: 0 15px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        .affirmation-entry {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #ddd;
+        }
+
+        h2, h3, h4 {
+            padding: 0 15px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 10px 0;
+        }
+
+        /* Desktop styles */
+        @media (min-width: 768px) {
+            .button-container, .file-controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            button {
+                width: auto;
+                margin: 0;
+            }
+
+            #affirmation {
+                font-size: 28px;
+                margin: 40px;
+            }
+
+            .back-button {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                margin: 0;
+            }
+
+            .instructions, h2, h3, h4 {
+                padding: 0;
+            }
+        }
     </style>
 </head>
+
+
 <body>
     <div id="input-page">
         <h2>Today's Achievement</h2>
@@ -131,14 +203,13 @@ button {
         
         <button onclick="toggleAllAffirmations()" style="margin-top: 20px">📝 View All Entries</button>
         
-        <div id="all-affirmations" style="display: none; margin-top: 30px; text-align: left;">
+        <div id="all-affirmations" style="display: none;">
             <h3>All Your Achievements:</h3>
             <div id="affirmations-list"></div>
         </div>
     </div>
 
     <script>
-        // [Previous baseAffirmations array stays the same]
         const baseAffirmations = [
             "Hey, remember when you created KAMY's website from scratch? Funders literally noticed and loved it. That was all you!",
             "You know how other NGOs keep saying our social media looks amazing? That's because you make everything look clean and pretty while still being super informative.",
@@ -245,23 +316,17 @@ button {
                 allAffirmationsDiv.style.display = 'block';
                 affirmationsList.innerHTML = '';
                 
-                // Add base affirmations with header
                 const baseHeader = document.createElement('div');
                 baseHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Core Achievements:</h4>';
                 affirmationsList.appendChild(baseHeader);
                 
                 baseAffirmations.forEach(affirmation => {
                     const entry = document.createElement('div');
-                    entry.style.margin = '10px 0';
-                    entry.style.padding = '10px';
-                    entry.style.borderLeft = '3px solid #ddd';
-                    entry.innerHTML = `
-                        <div style="margin-top: 5px;">${affirmation}</div>
-                    `;
+                    entry.className = 'affirmation-entry';
+                    entry.innerHTML = `<div>${affirmation}</div>`;
                     affirmationsList.appendChild(entry);
                 });
 
-                // Add user affirmations with header if they exist
                 if (userAffirmations.length > 0) {
                     const userHeader = document.createElement('div');
                     userHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Recent Achievements:</h4>';
@@ -270,9 +335,7 @@ button {
                     const reversedAffirmations = [...userAffirmations].reverse();
                     reversedAffirmations.forEach(affirmation => {
                         const entry = document.createElement('div');
-                        entry.style.margin = '10px 0';
-                        entry.style.padding = '10px';
-                        entry.style.borderLeft = '3px solid #ddd';
+                        entry.className = 'affirmation-entry';
                         entry.innerHTML = `
                             <div style="color: #666; font-size: 0.9em;">${affirmation.date}</div>
                             <div style="margin-top: 5px;">${affirmation.text}</div>
