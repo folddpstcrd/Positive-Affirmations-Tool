@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KAMY Achievements Reminder</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        #input-page, #affirmations-page {
+            width: 100%;
+            max-width: 800px;
+        }
+        #affirmations-page {
+            display: none;
+        }
+        #affirmation {
+            font-size: 28px;
+            margin: 40px;
+            line-height: 1.4;
+            min-height: 100px;
+            transition: opacity 0.5s;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            height: 100px;
+            margin: 20px 0;
+            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .instructions {
+            margin: 20px;
+            color: #666;
+            font-size: 16px;
+        }
+        #bypass-button {
+            font-size: 14px;
+            padding: 8px 16px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+        }
+        .file-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .file-input {
+            display: none;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div id="input-page">
+        <h2>Today's Achievement</h2>
+        <div class="instructions">
+            Take a moment to write down something positive you did or achieved today. 
+            It can be big or small - every win counts! 💫
+        </div>
+        <textarea id="new-affirmation" placeholder="Today, I..."></textarea>
+        <div class="button-container">
+            <button onclick="submitAffirmation()">Submit & See All Achievements</button>
+            <button id="bypass-button" onclick="showAffirmationsPage()">Skip to Archives ➔</button>
+        </div>
+    </div>
+
+    <div id="affirmations-page">
+        <button onclick="showInputPage()" class="back-button">← Back</button>
+        <div id="affirmation"></div>
+        <button onclick="showNextAffirmation()">💫 Show me something I did well</button>
+        
+        <div class="file-controls">
+            <button onclick="saveToFile()">💾 Save Backup File</button>
+            <button onclick="document.getElementById('fileInput').click()">📂 Load from File</button>
+            <input type="file" id="fileInput" class="file-input" accept=".json" onchange="loadFromFile(this)">
+        </div>
+        
+        <button onclick="toggleAllAffirmations()" style="margin-top: 20px">📝 View All Entries</button>
+        
+        <div id="all-affirmations" style="display: none; margin-top: 30px; text-align: left;">
+            <h3>All Your Achievements:</h3>
+            <div id="affirmations-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // [Previous baseAffirmations array stays the same]
+        const baseAffirmations = [
+            "Hey, remember when you created KAMY's website from scratch? Funders literally noticed and loved it. That was all you!",
+            "You know how other NGOs keep saying our social media looks amazing? That's because you make everything look clean and pretty while still being super informative.",
+            "That day at the RUUPIN roundtable? Three different people came up to thank you because your Climate Bill guide actually helped them understand what was going on. You made that happen!",
+            "You did something nobody else had done before - making those coal infographics that actually helped Malaysians understand what's happening. That was pretty brave and smart of you.",
+            "The way you take complicated climate stuff and make it make sense? That's actually a rare skill, and you do it every single time.",
+            "Remember all those NGO friends who've complimented our social media? They're right - you've got a real eye for making serious information look good and make sense.",
+            "Look at KAMY's brand - the logo, the whole vibe. That's your work, and it's helping us get noticed by funders. Not many people could've done that."
+        ];
+
+        let affirmations = [...baseAffirmations];
+        let userAffirmations = [];
+        let remainingAffirmations = [];
+
+        function saveToLocalStorage() {
+            const data = {
+                userAffirmations: userAffirmations
+            };
+            localStorage.setItem('myAchievements', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('myAchievements');
+            if (saved) {
+                const data = JSON.parse(saved);
+                userAffirmations = data.userAffirmations || [];
+                affirmations = [...baseAffirmations, ...userAffirmations.map(a => a.text)];
+            }
+        }
+
+        function saveToFile() {
+            const data = {
+                baseAffirmations: baseAffirmations,
+                userAffirmations: userAffirmations
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-achievements.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function loadFromFile(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.userAffirmations) {
+                            userAffirmations = data.userAffirmations;
+                            affirmations = [...baseAffirmations, ...userAffirmations.map(a => a.text)];
+                            saveToLocalStorage();
+                            resetAffirmations();
+                            showNextAffirmation();
+                            alert('Achievements loaded successfully!');
+                        }
+                    } catch (error) {
+                        alert('Error loading file. Please make sure it\'s a valid achievements file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function submitAffirmation() {
+            const newAffirmation = document.getElementById('new-affirmation').value;
+            if (newAffirmation.trim() !== '') {
+                const newEntry = {
+                    text: newAffirmation,
+                    date: new Date().toLocaleDateString()
+                };
+                userAffirmations.push(newEntry);
+                affirmations = [...baseAffirmations, ...userAffirmations.map(a => a.text)];
+                saveToLocalStorage();
+                document.getElementById('new-affirmation').value = '';
+            }
+            showAffirmationsPage();
+        }
+
+        function showInputPage() {
+            document.getElementById('affirmations-page').style.display = 'none';
+            document.getElementById('input-page').style.display = 'block';
+        }
+
+        function showAffirmationsPage() {
+            document.getElementById('input-page').style.display = 'none';
+            document.getElementById('affirmations-page').style.display = 'block';
+            resetAffirmations();
+            showNextAffirmation();
+        }
+
+        function toggleAllAffirmations() {
+            const allAffirmationsDiv = document.getElementById('all-affirmations');
+            const affirmationsList = document.getElementById('affirmations-list');
+            
+            if (allAffirmationsDiv.style.display === 'none') {
+                allAffirmationsDiv.style.display = 'block';
+                affirmationsList.innerHTML = '';
+                
+                // Add base affirmations with header
+                const baseHeader = document.createElement('div');
+                baseHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Core Achievements:</h4>';
+                affirmationsList.appendChild(baseHeader);
+                
+                baseAffirmations.forEach(affirmation => {
+                    const entry = document.createElement('div');
+                    entry.style.margin = '10px 0';
+                    entry.style.padding = '10px';
+                    entry.style.borderLeft = '3px solid #ddd';
+                    entry.innerHTML = `
+                        <div style="margin-top: 5px;">${affirmation}</div>
+                    `;
+                    affirmationsList.appendChild(entry);
+                });
+
+                // Add user affirmations with header if they exist
+                if (userAffirmations.length > 0) {
+                    const userHeader = document.createElement('div');
+                    userHeader.innerHTML = '<h4 style="margin-top: 30px; color: #666;">Recent Achievements:</h4>';
+                    affirmationsList.appendChild(userHeader);
+                    
+                    const reversedAffirmations = [...userAffirmations].reverse();
+                    reversedAffirmations.forEach(affirmation => {
+                        const entry = document.createElement('div');
+                        entry.style.margin = '10px 0';
+                        entry.style.padding = '10px';
+                        entry.style.borderLeft = '3px solid #ddd';
+                        entry.innerHTML = `
+                            <div style="color: #666; font-size: 0.9em;">${affirmation.date}</div>
+                            <div style="margin-top: 5px;">${affirmation.text}</div>
+                        `;
+                        affirmationsList.appendChild(entry);
+                    });
+                }
+            } else {
+                allAffirmationsDiv.style.display = 'none';
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function resetAffirmations() {
+            remainingAffirmations = [...affirmations];
+            shuffleArray(remainingAffirmations);
+        }
+
+        function showNextAffirmation() {
+            const affirmationDiv = document.getElementById('affirmation');
+            
+            if (remainingAffirmations.length === 0) {
+                resetAffirmations();
+            }
+            
+            affirmationDiv.style.opacity = 0;
+            
+            setTimeout(() => {
+                const nextAffirmation = remainingAffirmations.pop();
+                affirmationDiv.textContent = nextAffirmation;
+                affirmationDiv.style.opacity = 1;
+            }, 500);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            resetAffirmations();
+            showNextAffirmation();
+        });
+    </script>
+</body>
+</html>
